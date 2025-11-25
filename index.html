@@ -40,91 +40,62 @@
             filter: blur(2px);
         }
 
-        .content {
-            position: relative;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .title {
-            font-size: 4rem;
-            font-weight: bold;
-            color: white;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5),
-                0 0 40px rgba(200, 220, 255, 0.3);
-            animation: glow 3s ease-in-out infinite alternate;
-        }
-
-        .subtitle {
-            font-size: 1.5rem;
-            color: rgba(200, 220, 255, 0.8);
-            margin-top: 20px;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-        }
-
-        @keyframes glow {
-            from {
-                text-shadow: 0 0 20px rgba(255, 255, 255, 0.5),
-                    0 0 40px rgba(200, 220, 255, 0.3);
-            }
-
-            to {
-                text-shadow: 0 0 30px rgba(255, 255, 255, 0.8),
-                    0 0 60px rgba(200, 220, 255, 0.5),
-                    0 0 80px rgba(150, 180, 255, 0.3);
-            }
-        }
-
-        .ground {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100px;
-            background: linear-gradient(to top,
-                    rgba(255, 255, 255, 0.9) 0%,
-                    rgba(230, 240, 255, 0.7) 50%,
-                    transparent 100%);
-            z-index: 5;
-        }
-
         .controls {
             position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 20px;
+            right: 20px;
             z-index: 20;
-            display: flex;
-            gap: 15px;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 12px;
             color: white;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s ease;
+            font-family: system-ui, -apple-system, sans-serif;
+            font-size: 13px;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
-        .btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            border-color: white;
-            transform: scale(1.05);
+        .controls h3 {
+            margin: 0 0 15px 0;
+            font-size: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 10px;
         }
 
-        .btn.active {
-            background: rgba(255, 255, 255, 0.4);
-            border-color: white;
+        .control-section {
+            margin-bottom: 20px;
+        }
+
+        .control-section h4 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .control-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            gap: 10px;
+        }
+
+        .control-row label {
+            flex-shrink: 0;
+            min-width: 80px;
+        }
+
+        .control-row input[type="range"] {
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .control-row .value {
+            min-width: 50px;
+            text-align: right;
+            font-family: monospace;
+            color: #8cf;
         }
     </style>
 </head>
@@ -135,17 +106,109 @@
     <canvas id="middleLayer" class="snow-layer"></canvas>
     <canvas id="frontLayer" class="snow-layer"></canvas>
 
-    <div class="ground"></div>
-
-    <div class="content">
-        <h1 class="title">❄️ Метель ❄️</h1>
-        <p class="subtitle">Зимняя буря на вашем экране</p>
-    </div>
-
     <div class="controls">
-        <button class="btn" onclick="setIntensity('light')">Лёгкий снег</button>
-        <button class="btn active" onclick="setIntensity('normal')">Метель</button>
-        <button class="btn" onclick="setIntensity('blizzard')">Буран</button>
+        <h3>⚙️ Настройки метели</h3>
+
+        <div class="control-section">
+            <h4>Общие</h4>
+            <div class="control-row">
+                <label>windSpeed</label>
+                <input type="range" id="windSpeed" min="0" max="20" step="0.1" value="5">
+                <span class="value" id="windSpeedVal">5</span>
+            </div>
+            <div class="control-row">
+                <label>fallSpeed</label>
+                <input type="range" id="fallSpeed" min="0.1" max="20" step="0.1" value="5">
+                <span class="value" id="fallSpeedVal">5</span>
+            </div>
+        </div>
+
+        <div class="control-section">
+            <h4>Back Layer</h4>
+            <div class="control-row">
+                <label>count</label>
+                <input type="range" id="back-count" min="0" max="5000" step="100" value="2000">
+                <span class="value" id="back-countVal">2000</span>
+            </div>
+            <div class="control-row">
+                <label>sizeMin</label>
+                <input type="range" id="back-sizeMin" min="0.5" max="5" step="0.1" value="1">
+                <span class="value" id="back-sizeMinVal">1</span>
+            </div>
+            <div class="control-row">
+                <label>sizeMax</label>
+                <input type="range" id="back-sizeMax" min="0.5" max="5" step="0.1" value="2">
+                <span class="value" id="back-sizeMaxVal">2</span>
+            </div>
+            <div class="control-row">
+                <label>speed</label>
+                <input type="range" id="back-speed" min="0.1" max="2" step="0.1" value="0.3">
+                <span class="value" id="back-speedVal">0.3</span>
+            </div>
+            <div class="control-row">
+                <label>opacity</label>
+                <input type="range" id="back-opacity" min="0" max="1" step="0.05" value="0.4">
+                <span class="value" id="back-opacityVal">0.4</span>
+            </div>
+        </div>
+
+        <div class="control-section">
+            <h4>Middle Layer</h4>
+            <div class="control-row">
+                <label>count</label>
+                <input type="range" id="middle-count" min="0" max="3000" step="100" value="1000">
+                <span class="value" id="middle-countVal">1000</span>
+            </div>
+            <div class="control-row">
+                <label>sizeMin</label>
+                <input type="range" id="middle-sizeMin" min="0.5" max="5" step="0.1" value="2">
+                <span class="value" id="middle-sizeMinVal">2</span>
+            </div>
+            <div class="control-row">
+                <label>sizeMax</label>
+                <input type="range" id="middle-sizeMax" min="0.5" max="8" step="0.1" value="3.5">
+                <span class="value" id="middle-sizeMaxVal">3.5</span>
+            </div>
+            <div class="control-row">
+                <label>speed</label>
+                <input type="range" id="middle-speed" min="0.1" max="2" step="0.1" value="0.7">
+                <span class="value" id="middle-speedVal">0.7</span>
+            </div>
+            <div class="control-row">
+                <label>opacity</label>
+                <input type="range" id="middle-opacity" min="0" max="1" step="0.05" value="0.2">
+                <span class="value" id="middle-opacityVal">0.2</span>
+            </div>
+        </div>
+
+        <div class="control-section">
+            <h4>Front Layer</h4>
+            <div class="control-row">
+                <label>count</label>
+                <input type="range" id="front-count" min="0" max="500" step="10" value="200">
+                <span class="value" id="front-countVal">200</span>
+            </div>
+            <div class="control-row">
+                <label>sizeMin</label>
+                <input type="range" id="front-sizeMin" min="1" max="10" step="0.5" value="4">
+                <span class="value" id="front-sizeMinVal">4</span>
+            </div>
+            <div class="control-row">
+                <label>sizeMax</label>
+                <input type="range" id="front-sizeMax" min="1" max="15" step="0.5" value="6">
+                <span class="value" id="front-sizeMaxVal">6</span>
+            </div>
+            <div class="control-row">
+                <label>speed</label>
+                <input type="range" id="front-speed" min="0.1" max="3" step="0.1" value="1.2">
+                <span class="value" id="front-speedVal">1.2</span>
+            </div>
+            <div class="control-row">
+                <label>opacity</label>
+                <input type="range" id="front-opacity" min="0" max="1" step="0.05" value="0.5">
+                <span class="value" id="front-opacityVal">0.5</span>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -174,7 +237,7 @@
         }
         resize();
 
-        // Настройки слоёв — ОПТИМИЗИРОВАННОЕ количество частиц
+        // Настройки слоёв
         const layerConfig = {
             back: { count: 2000, sizeMin: 1, sizeMax: 2, speed: 0.3, opacity: 0.4 },
             middle: { count: 1000, sizeMin: 2, sizeMax: 3.5, speed: 0.7, opacity: 0.2 },
@@ -182,8 +245,8 @@
         };
 
         // Базовые настройки
-        let windSpeed = 10;
-        let fallSpeed = 10;
+        let windSpeed = 5;
+        let fallSpeed = 5;
 
         // Хранилище снежинок — используем TypedArrays для скорости
         const snowData = {
@@ -215,8 +278,20 @@
         }
 
         function resetSnowflake(data, idx, config) {
-            data[idx + 0] = Math.random() * (width + 100) - 50;
-            data[idx + 1] = -10;
+            // При сильном ветре часть снежинок появляется слева
+            const spawnFromLeft = windSpeed > 0 && Math.random() < windSpeed / (windSpeed + fallSpeed);
+
+            if (spawnFromLeft) {
+                // Появляемся слева за экраном
+                data[idx + 0] = -10 - Math.random() * 50;
+                data[idx + 1] = Math.random() * height;
+            } else {
+                // Появляемся сверху (с учётом ветра — смещаемся влево)
+                const windOffset = (windSpeed / fallSpeed) * height;
+                data[idx + 0] = Math.random() * (width + windOffset) - windOffset;
+                data[idx + 1] = -10 - Math.random() * 50;
+            }
+
             data[idx + 2] = config.sizeMin + Math.random() * (config.sizeMax - config.sizeMin);
             data[idx + 3] = (windSpeed + Math.random() * 0.5) * config.speed;
             data[idx + 4] = (fallSpeed + Math.random() * 0.5) * config.speed;
@@ -264,38 +339,40 @@
             requestAnimationFrame(animate);
         }
 
-        function setIntensity(level) {
-            document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+        // Обработчики контролов
+        function setupControls() {
+            // Общие настройки
+            document.getElementById('windSpeed').addEventListener('input', (e) => {
+                windSpeed = parseFloat(e.target.value);
+                document.getElementById('windSpeedVal').textContent = windSpeed;
+            });
 
-            switch (level) {
-                case 'light':
-                    windSpeed = 0.8;
-                    fallSpeed = 0.8;
-                    layerConfig.back.count = 40;
-                    layerConfig.middle.count = 50;
-                    layerConfig.front.count = 15;
-                    break;
-                case 'normal':
-                    windSpeed = 2;
-                    fallSpeed = 1.5;
-                    layerConfig.back.count = 60;
-                    layerConfig.middle.count = 80;
-                    layerConfig.front.count = 25;
-                    break;
-                case 'blizzard':
-                    windSpeed = 5;
-                    fallSpeed = 3;
-                    layerConfig.back.count = 100;
-                    layerConfig.middle.count = 150;
-                    layerConfig.front.count = 40;
-                    break;
-            }
+            document.getElementById('fallSpeed').addEventListener('input', (e) => {
+                fallSpeed = parseFloat(e.target.value);
+                document.getElementById('fallSpeedVal').textContent = fallSpeed;
+            });
 
-            // Пересоздаём слои
-            createLayer('back');
-            createLayer('middle');
-            createLayer('front');
+            // Настройки слоёв
+            const layers = ['back', 'middle', 'front'];
+            const props = ['count', 'sizeMin', 'sizeMax', 'speed', 'opacity'];
+
+            layers.forEach(layer => {
+                props.forEach(prop => {
+                    const input = document.getElementById(`${layer}-${prop}`);
+                    if (input) {
+                        input.addEventListener('input', (e) => {
+                            const value = parseFloat(e.target.value);
+                            layerConfig[layer][prop] = value;
+                            document.getElementById(`${layer}-${prop}Val`).textContent = value;
+
+                            // Пересоздаём слой только при изменении count
+                            if (prop === 'count') {
+                                createLayer(layer);
+                            }
+                        });
+                    }
+                });
+            });
         }
 
         // Throttled resize
@@ -311,6 +388,7 @@
         });
 
         // Запуск
+        setupControls();
         createLayer('back');
         createLayer('middle');
         createLayer('front');

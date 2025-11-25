@@ -1,0 +1,25 @@
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+*.log
+*.tmp
+*.bak
+build/
+dist/
+target/
+
+# Dependency management files
+node_modules/
+vendor/
+
+# IDE and Editor specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Sensitive or personal files
+.env
+config.local.js
